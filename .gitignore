@@ -1,0 +1,144 @@
+# ==========================================
+# ROOT
+# ==========================================
+
+node_modules/
+.env
+.env.*
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# ==========================================
+# MOBILE APP (EXPO / REACT NATIVE)
+# ==========================================
+
+mobile-app/node_modules/
+mobile-app/.expo/
+mobile-app/dist/
+mobile-app/web-build/
+mobile-app/.expo-shared/
+
+# Expo
+mobile-app/expo-env.d.ts
+
+# React Native Native Folders
+mobile-app/android/
+mobile-app/ios/
+
+# Metro
+mobile-app/.metro-health-check*
+
+# Logs
+mobile-app/npm-debug.log*
+mobile-app/yarn-debug.log*
+mobile-app/yarn-error.log*
+
+# ==========================================
+# BACKEND (NODE + EXPRESS)
+# ==========================================
+
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/.env
+
+# TypeScript
+backend/*.tsbuildinfo
+
+# Prisma
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# ==========================================
+# AI SERVICE (FASTAPI)
+# ==========================================
+
+ai_service/venv/
+ai_service/.venv/
+
+# Python cache
+ai_service/__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+ai_service/.env
+
+# FastAPI logs
+ai_service/*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ==========================================
+# DATABASE
+# ==========================================
+
+*.sqlite
+*.db
+*.sql
+
+# ==========================================
+# GENERATED FILES
+# ==========================================
+
+uploads/
+temp/
+tmp/
+
+# OCR outputs
+ocr_output/
+
+# Generated audio
+generated_audio/
+
+# ==========================================
+# BUILD FILES
+# ==========================================
+
+dist/
+build/
+coverage/
+
+# ==========================================
+# TESTING
+# ==========================================
+
+coverage/
+.nyc_output/
+
+# ==========================================
+# DOCKER
+# ==========================================
+
+docker-data/
+*.pid
+
+# ==========================================
+# SECRETS
+# ==========================================
+
+*.pem
+*.key
+*.crt
+
+secrets/
+credentials/
+
+# ==========================================
+# OPTIONAL FUTURE FILES
+# ==========================================
+
+# docs/generated/
+# ai_service/models/
+# backend/uploads/
+# mobile-app/assets/generated/
