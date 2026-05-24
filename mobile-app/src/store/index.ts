@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import type {
   Transaction,
   Notif,
@@ -8,6 +9,21 @@ import type {
   RtcData,
   ScamResult,
 } from '../types';
+
+// ─────────────────────────────
+// Loan Type
+// ─────────────────────────────
+export type Loan = {
+  id: string;
+  type: 'lent' | 'borrowed';
+  personName: string;
+  amount: number;
+  remainingAmount: number;
+  interestRate: number;
+  dueDate: string | null;
+  status: 'active' | 'paid' | 'overdue';
+  date: string;
+};
 
 const today = new Date();
 
@@ -20,7 +36,6 @@ const d = (offset: number) => {
 };
 
 type Store = {
-
   // ─────────────────────────────
   // State
   // ─────────────────────────────
@@ -43,6 +58,8 @@ type Store = {
   onboarded: boolean;
 
   isLoggedIn: boolean;
+
+  loans: Loan[];
 
   // ─────────────────────────────
   // Actions
@@ -88,11 +105,26 @@ type Store = {
   setLoggedIn: (
     v: boolean
   ) => void;
+
+  // ─────────────────────────────
+  // Loan Actions
+  // ─────────────────────────────
+  addLoan: (
+    loan: Omit<Loan, 'id'>
+  ) => void;
+
+  updateLoan: (
+    id: string,
+    updates: Partial<Loan>
+  ) => void;
+
+  removeLoan: (
+    id: string
+  ) => void;
 };
 
 export const useStore = create<Store>(
   (set) => ({
-
     // ─────────────────────────────
     // Initial State
     // ─────────────────────────────
@@ -222,6 +254,35 @@ export const useStore = create<Store>(
     isLoggedIn: false,
 
     // ─────────────────────────────
+    // Loans Initial State
+    // ─────────────────────────────
+    loans: [
+      {
+        id: 'l1',
+        type: 'borrowed',
+        personName: 'Mahesh',
+        amount: 10000,
+        remainingAmount: 6000,
+        interestRate: 5,
+        dueDate: d(-15),
+        status: 'active',
+        date: d(10),
+      },
+
+      {
+        id: 'l2',
+        type: 'lent',
+        personName: 'Suresh',
+        amount: 5000,
+        remainingAmount: 0,
+        interestRate: 0,
+        dueDate: d(2),
+        status: 'paid',
+        date: d(20),
+      },
+    ],
+
+    // ─────────────────────────────
     // Actions
     // ─────────────────────────────
     addTransaction: (t) =>
@@ -306,11 +367,43 @@ export const useStore = create<Store>(
       set({
         isLoggedIn: v,
       }),
+
+    // ─────────────────────────────
+    // Loan Actions
+    // ─────────────────────────────
+    addLoan: (loan) =>
+      set((s) => ({
+        loans: [
+          ...s.loans,
+          {
+            ...loan,
+            id: Date.now().toString(),
+          },
+        ],
+      })),
+
+    updateLoan: (id, updates) =>
+      set((s) => ({
+        loans: s.loans.map((l) =>
+          l.id === id
+            ? {
+                ...l,
+                ...updates,
+              }
+            : l
+        ),
+      })),
+
+    removeLoan: (id) =>
+      set((s) => ({
+        loans: s.loans.filter(
+          (l) => l.id !== id
+        ),
+      })),
   })
 );
 
 export const useTotals = () => {
-
   const tx = useStore(
     (s) => s.transactions
   );
