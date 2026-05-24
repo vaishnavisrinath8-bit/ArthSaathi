@@ -1,13 +1,15 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeOutLeft, Layout } from 'react-native-reanimated';
 import { BellOff } from 'lucide-react-native';
-import { useStore } from '../../store';
-import { NotifCard } from '../../components/ui/NotifCard';
-import { C } from '../../constants/colors';
+import { useStore } from '../store';
+import { NotifCard } from '../components/ui/NotifCard';
+import { C } from '../constants/colors';
 
 export default function AlertsScreen() {
+  const router = useRouter();
   const notifications = useStore((s) => s.notifications);
   const markNotifRead = useStore((s) => s.markNotifRead);
   const unread = notifications.filter((n) => !n.read);
@@ -16,9 +18,17 @@ export default function AlertsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-slate-50" edges={['top']}>
       <View className="flex-row items-center justify-between px-4 py-3.5 bg-white border-b border-slate-100">
-        <View>
-          <Text className="text-base font-bold text-slate-800">Alerts</Text>
-          <Text className="text-xs text-slate-500">{unread.length} unread</Text>
+        <View className="flex-row items-center gap-3">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="w-9 h-9 rounded-full bg-slate-100 items-center justify-center"
+          >
+            <Text className="text-xl text-slate-700 mt-[-2px]">‹</Text>
+          </TouchableOpacity>
+          <View>
+            <Text className="text-base font-bold text-slate-800">Alerts</Text>
+            <Text className="text-xs text-slate-500">{unread.length} unread</Text>
+          </View>
         </View>
         {unread.length > 0 && (
           <View className="w-7 h-7 rounded-full bg-rose-500 items-center justify-center">

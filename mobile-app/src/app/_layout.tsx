@@ -23,8 +23,6 @@ export default function RootLayout() {
     <SafeAreaProvider style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="screens/voice" options={{ presentation: 'modal' }} />
         <Stack.Screen name="screens/loan"  options={{ presentation: 'card' }} />

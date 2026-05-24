@@ -56,7 +56,7 @@ export default function RtcScreen() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') { Alert.alert('Permission needed'); return; }
-    const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.9 });
+    const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
     if (!r.canceled) simulateScan();
   };
 
@@ -97,61 +97,61 @@ export default function RtcScreen() {
               <LinearGradient
                 colors={[C.emerald500, C.teal600]}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 18, padding: 18 }}
-              >
-              <Feather name="camera" size={28} color={C.white} />
-                <View>
-                  <Text className="text-white font-bold text-base">Take Photo</Text>
-                  <Text className="text-white/80 text-xs mt-0.5">Scan with camera</Text>
-                </View>
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 18, padding: 16, shadowColor: C.emerald500, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4 }}
+            >
+              <View className="w-12 h-12 bg-white/20 rounded-full items-center justify-center">
+                <Feather name="camera" size={24} color={C.white} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-white font-bold text-base">Scan with Camera</Text>
+                <Text className="text-white/80 text-xs mt-0.5">Take a clear picture of your RTC</Text>
+              </View>
+              <Feather name="chevron-right" size={20} color={C.white} opacity={0.8} />
               </LinearGradient>
             </TouchableOpacity>
 
             {/* Gallery */}
             <TouchableOpacity
               activeOpacity={0.8} onPress={pickImage}
-              className="flex-row items-center gap-3 bg-white border border-slate-200 rounded-2xl p-4"
-            >
-              <Feather name="upload" size={24} color={C.emerald600} />
-              <View>
-                <Text className="text-slate-800 font-semibold text-sm">Upload from Gallery</Text>
-                <Text className="text-slate-400 text-xs mt-0.5">JPG, PNG supported</Text>
-              </View>
+            className="flex-row items-center gap-4 bg-white border border-slate-200 rounded-2xl p-4"
+            style={{ shadowColor: '#94a3b8', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
+          >
+            <View className="w-12 h-12 bg-emerald-50 rounded-full items-center justify-center">
+              <Feather name="image" size={24} color={C.emerald600} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-slate-800 font-bold text-sm">Upload from Gallery</Text>
+              <Text className="text-slate-500 text-xs mt-0.5">Select an existing photo (JPG, PNG)</Text>
+            </View>
+            <Feather name="chevron-right" size={20} color={C.slate400} />
             </TouchableOpacity>
 
             {/* PDF */}
             <TouchableOpacity
               activeOpacity={0.8} onPress={pickDoc}
-              className="flex-row items-center gap-3 bg-white border border-slate-200 rounded-2xl p-4"
-            >
-              <Text className="text-2xl">📑</Text>
-              <View>
-                <Text className="text-slate-800 font-semibold text-sm">Upload PDF</Text>
-                <Text className="text-slate-400 text-xs mt-0.5">PDF documents supported</Text>
-              </View>
+            className="flex-row items-center gap-4 bg-white border border-slate-200 rounded-2xl p-4"
+            style={{ shadowColor: '#94a3b8', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
+          >
+            <View className="w-12 h-12 bg-emerald-50 rounded-full items-center justify-center">
+              <Feather name="file-text" size={24} color={C.emerald600} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-slate-800 font-bold text-sm">Upload Document</Text>
+              <Text className="text-slate-500 text-xs mt-0.5">Choose a downloaded PDF file</Text>
+            </View>
+            <Feather name="chevron-right" size={20} color={C.slate400} />
             </TouchableOpacity>
 
             {/* Info */}
-            <Card className="p-4">
-              <Text className="text-sm font-bold text-slate-800 mb-1.5">What is RTC?</Text>
-              <Text className="text-xs text-slate-500 leading-5">
-                Record of Rights, Tenancy and Crops — an official Karnataka land record proving ownership. Required for agricultural loans.
-              </Text>
-            </Card>
-
-            {/* Demo trigger */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={simulateScan}
-              className="items-center py-4 border-2 border-dashed border-emerald-300 bg-emerald-50/50 rounded-2xl"
-            >
-              <View className="flex-row gap-3 mb-2 items-center">
-              <Feather name="camera" size={28} color={C.emerald600} />
-              <Feather name="upload" size={28} color={C.emerald600} />
+          <Card className="p-4 mt-2">
+            <View className="flex-row items-center gap-2 mb-1.5">
+              <Feather name="info" size={16} color={C.emerald600} />
+              <Text className="text-sm font-bold text-slate-800">What is RTC?</Text>
               </View>
-              <Text className="text-sm font-semibold text-slate-700">Tap to upload RTC document</Text>
-              <Text className="text-xs text-slate-500 mt-0.5">JPG, PNG, PDF supported</Text>
-            </TouchableOpacity>
+            <Text className="text-xs text-slate-500 leading-5">
+              Record of Rights, Tenancy and Crops — an official Karnataka land record proving ownership. Required for agricultural loans.
+            </Text>
+          </Card>
           </View>
         )}
 
