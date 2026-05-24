@@ -44,7 +44,7 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen name="home"     options={{ title: 'Home',     tabBarIcon: ({ focused }) => <TabIcon name="home"        focused={focused} /> }} />
-        <Tabs.Screen name="expenses" options={{ title: 'Expenses', tabBarIcon: ({ focused }) => <TabIcon name="pie-chart"   focused={focused} /> }} />
+        <Tabs.Screen name="ledger" options={{ title: 'Ledger', tabBarIcon: ({ focused }) => <TabIcon name="pie-chart"   focused={focused} /> }} />
         <Tabs.Screen name="insights" options={{ title: 'Insights', tabBarIcon: ({ focused }) => <TabIcon name="bar-chart-2" focused={focused} /> }} />
         <Tabs.Screen name="alerts"   options={{ title: 'Alerts',   tabBarIcon: ({ focused }) => <TabIcon name="bell"        focused={focused} />, tabBarBadge: unread > 0 ? unread : undefined }} />
         <Tabs.Screen name="profile"  options={{ title: 'Profile',  tabBarIcon: ({ focused }) => <TabIcon name="user"        focused={focused} /> }} />
