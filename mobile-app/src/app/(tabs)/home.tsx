@@ -1,4 +1,4 @@
-﻿﻿import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, RefreshControl,
 } from 'react-native';
