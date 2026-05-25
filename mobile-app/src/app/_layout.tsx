@@ -8,26 +8,47 @@ import * as NavigationBar from 'expo-navigation-bar';
 
 export default function RootLayout() {
   useEffect(() => {
-    async function hideNavBar() {
+    const setupNavBar = async () => {
+      if (Platform.OS !== 'android') return;
+
       try {
-        if (Platform.OS === 'android') {
-          await NavigationBar.setVisibilityAsync('visible');
+        // Hide Android navigation bar
+        await NavigationBar.setVisibilityAsync('hidden');
+
+        // Optional immersive mode
+        if (NavigationBar.setBehaviorAsync) {
+          await NavigationBar.setBehaviorAsync('overlay-swipe');
         }
-      } catch (error) {
+      } catch (e) {
+        console.log('NavigationBar error:', e);
       }
-    }
-    hideNavBar();
+    };
+
+    setupNavBar();
   }, []);
 
   return (
-    <SafeAreaProvider style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      <StatusBar style="dark" />
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: '#fff' }}>
+      <StatusBar style="light" translucent />
+
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="screens/voice" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="screens/loan"  options={{ presentation: 'card' }} />
-        <Stack.Screen name="screens/scam"  options={{ presentation: 'card' }} />
-        <Stack.Screen name="screens/rtc"   options={{ presentation: 'card' }} />
+        <Stack.Screen
+          name="screens/voice"
+          options={{ presentation: 'modal' }}
+        />
+        <Stack.Screen
+          name="screens/loan"
+          options={{ presentation: 'card' }}
+        />
+        <Stack.Screen
+          name="screens/scam"
+          options={{ presentation: 'card' }}
+        />
+        <Stack.Screen
+          name="screens/rtc"
+          options={{ presentation: 'card' }}
+        />
       </Stack>
     </SafeAreaProvider>
   );
