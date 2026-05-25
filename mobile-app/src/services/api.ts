@@ -6,8 +6,8 @@ import { getToken } from './auth';
 // ─────────────────────────────────────────
 // REPLACE '192.168.1.X' WITH YOUR COMPUTER'S ACTUAL IPv4 ADDRESS!
 // localhost will NOT work on a physical device.
-const BASE  = process.env.EXPO_PUBLIC_API_URL   ?? 'http://192.168.1.X:3000';
-const VOICE = process.env.EXPO_PUBLIC_VOICE_URL ?? 'http://192.168.1.X:8001';
+const BASE  = process.env.EXPO_PUBLIC_API_URL   ?? 'http://192.168.29.9:3000';
+const VOICE = process.env.EXPO_PUBLIC_VOICE_URL ?? 'http://192.168.29.9:8001';
 
 // ─────────────────────────────────────────
 // Axios instances
