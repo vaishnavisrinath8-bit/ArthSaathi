@@ -13,6 +13,7 @@ import { Waveform } from '../../components/voice/Waveform';
 import { ChatBubble } from '../../components/voice/ChatBubble';
 import { C } from '../../constants/colors';
 import { endpoints } from '../../services/api';
+import { useAudioRecorder } from '../../hooks/useAudioRecorder';
 
 type VS = 'idle' | 'listening' | 'processing' | 'done';
 
@@ -32,8 +33,8 @@ export default function VoiceScreen() {
   const scrollRef      = useRef<ScrollView>(null);
 
   const [state, setState] = useState<VS>('idle');
+  const { start, stop, normalizedLevel } = useAudioRecorder();
 
-  // Map display language to backend language code
   const getLangCode = () => {
     const map: Record<string, string> = {
       Hindi: 'hi', English: 'en', Marathi: 'mr', Tamil: 'ta', Telugu: 'te',
@@ -55,9 +56,11 @@ export default function VoiceScreen() {
 
   const startRec = async () => {
     setState('listening');
+    await start();
   };
 
   const stopRec = async () => {
+    await stop();
     runDemo();
   };
 
@@ -66,7 +69,7 @@ export default function VoiceScreen() {
     else if (state === 'listening') stopRec();
   };
 
-  /* ── Quick prompt handler — calls financial-guidance API ── */
+  /* ── Quick prompt handler ── */
   const handleQuickPrompt = async (prompt: string) => {
     addAiMessage({ role: 'user', text: prompt });
     setState('processing');
@@ -127,9 +130,13 @@ export default function VoiceScreen() {
 
       {/* Controls */}
       <View className="bg-white pt-4 pb-10 items-center border-t border-slate-100 gap-2">
-        <Waveform active={state === 'listening'} />
+        <Waveform active={state === 'listening'} level={normalizedLevel} />
         <Text className="text-sm font-medium text-slate-600">{STATUS_TEXT[state]}</Text>
-        <MicButton listening={state === 'listening'} onPress={handleMic} />
+        <MicButton
+          listening={state === 'listening'}
+          onPress={handleMic}
+          level={normalizedLevel}
+        />
         <Text className="text-xs text-slate-400 h-[18px]">
           {state === 'idle' ? 'Hold mic and speak in any language' : state === 'listening' ? 'Tap again to stop' : ''}
         </Text>
