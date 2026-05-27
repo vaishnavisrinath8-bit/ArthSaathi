@@ -40,12 +40,23 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-50" edges={['top']}>
-      <LinearGradient colors={[C.emerald600, C.teal600]} className="px-5 pt-8 pb-8 rounded-b-[28px]">
+      <LinearGradient
+        colors={[C.emerald600, C.teal600]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 32,
+          paddingBottom: 28,
+          borderBottomLeftRadius: 28,
+          borderBottomRightRadius: 28,
+        }}
+      >
         <Text className="text-white text-3xl font-black">Login</Text>
         <Text className="text-emerald-50 mt-2 text-sm">Continue with your mobile number and password.</Text>
       </LinearGradient>
 
-      <View className="px-5 mt-6">
+      <View className="flex-1 justify-center px-5">
         <TextInput
           value={mobileNumber}
           onChangeText={setMobileNumber}
