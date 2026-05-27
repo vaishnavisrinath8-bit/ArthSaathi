@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from 'react';
+﻿﻿import React, { useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, RefreshControl,
 } from 'react-native';
@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const router   = useRouter();
   const { income, expense, savings, score } = useTotals();
   const transactions = useStore((s) => s.transactions);
+  const unread = useStore((s) => s.notifications.filter((n) => !n.read).length);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const monthly = useMemo(() => [
@@ -82,15 +83,28 @@ export default function HomeScreen() {
             borderBottomRightRadius: 28,
           }}
         >
-          {/* Name row — Kotlin: greeting + name + location stacked */}
-          <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#fff', lineHeight: 28 }}>
-              Namaste, Ramesh Patil
-            </Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2, fontWeight: '500' }}>
-              📍 Sindagi, Karnataka
-            </Text>
-          </View>
+      {/* Header row */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+        <View>
+          <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#fff', lineHeight: 28 }}>
+            Namaste, Ramesh Patil
+          </Text>
+          <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2, fontWeight: '500' }}>
+            📍 Sindagi, Karnataka
+          </Text>
+        </View>
+
+        <TouchableOpacity 
+          activeOpacity={0.85}
+          onPress={() => router.push('../alerts')} 
+          style={{ width: 44, height: 44, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
+        >
+          <Feather name="bell" size={20} color="#fff" />
+          {unread > 0 && (
+            <View style={{ position: 'absolute', top: 10, right: 12, width: 8, height: 8, backgroundColor: C.rose500, borderRadius: 4 }} />
+          )}
+        </TouchableOpacity>
+      </View>
 
           {/* Health score card — white/15 glass */}
           <View
@@ -245,7 +259,7 @@ export default function HomeScreen() {
             {/* Add Transaction */}
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => router.push('/(tabs)/expenses')}
+              onPress={() => router.push('/(tabs)/ledger')}
               style={{ flex: 1 }}
             >
               <View
@@ -391,7 +405,7 @@ export default function HomeScreen() {
             <Text style={{ fontSize: 16, fontWeight: '900', color: '#1e293b' }}>
               Recent Transactions
             </Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/expenses')}>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/ledger')}>
               <Text style={{ fontSize: 13, fontWeight: '600', color: C.emerald600 }}>See all →</Text>
             </TouchableOpacity>
           </View>
