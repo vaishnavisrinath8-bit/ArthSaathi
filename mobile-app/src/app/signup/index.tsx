@@ -33,8 +33,8 @@ export default function SignupScreen() {
   const preferredLanguage = useStore((s) => s.language);
 
   const submit = () => {
-    if (!fullName.trim() || mobileNumber.trim().length < 10 || password.length < 4) {
-      Alert.alert('Check signup details', 'Enter name, 10 digit mobile number and at least 4 characters password.');
+    if (!fullName.trim() || mobileNumber.trim().length !== 10 || password.length < 6) {
+      Alert.alert('Check signup details', 'Enter name, 10 digit mobile number and at least 6 characters password.');
       return;
     }
 
@@ -44,10 +44,6 @@ export default function SignupScreen() {
       password,
       preferredLanguage,
       occupation,
-      monthlyIncome: '',
-      monthlyExpenses: '',
-      hasActiveLoans: false,
-      pastRepaymentHabit: 'Never Missed',
     });
 
     const route =
@@ -133,6 +129,10 @@ export default function SignupScreen() {
 
           <TouchableOpacity onPress={submit} className="bg-emerald-600 rounded-2xl py-4 items-center mt-2">
             <Text className="text-white text-base font-black">Register</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.replace('/login')} className="py-4 items-center">
+            <Text className="text-emerald-700 font-black">Already have an account? Login</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
