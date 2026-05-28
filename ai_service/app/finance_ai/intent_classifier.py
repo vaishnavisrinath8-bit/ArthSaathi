@@ -1,14 +1,18 @@
+
 # ai_service/app/finance_ai/intent_classifier.py
 # Rule-based + GPT intent detection for financial messages
 
 import re
+
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 # ─────────────────────────────────────────
 # INTENT DEFINITIONS
 # ─────────────────────────────────────────
+
 
 INTENTS = {
     "expense_tracking":   "User wants to log or record an expense or income.",
@@ -19,6 +23,7 @@ INTENTS = {
     "rtc_query":          "User has questions about land records, RTC documents, or property.",
     "general":            "General query not matching any specific financial intent.",
 }
+
 
 # ─────────────────────────────────────────
 # KEYWORD RULES (multilingual — covers EN, HI, KN)
@@ -76,15 +81,48 @@ INTENT_KEYWORDS = {
         "patta", "bhoomi",
         # Kannada
         "hola", "survey number", "bhumi",
+
+INTENT_KEYWORDS = {
+    "expense_tracking": [
+        "spent", "spend", "bought", "purchase", "expense", "cost", "paid", "pay",
+        "bill", "grocery", "fuel", "rent", "income", "earned", "salary", "received",
+        "kharcha", "kharch", "kharida", "bikri", "paisa", "rupee", "diya", "mila",
+        "kamaya", "aaya", "kharchu", "kharchi", "vantige", "sikkitu",
+    ],
+    "loan_query": [
+        "loan", "emi", "borrow", "lend", "debt", "interest", "repay", "installment",
+        "credit", "mortgage", "kisan credit", "karz", "udhaar", "byaj", "kist",
+        "sali", "saali", "nidhi", "savalu",
+    ],
+    "scam_check": [
+        "scam", "fraud", "otp", "phishing", "fake", "suspicious", "threat", "hack",
+        "password", "pin", "account blocked", "kyc", "verify your", "win prize",
+        "dhoka", "nakli", "thagi", "nakali",
+    ],
+    "balance_inquiry": [
+        "balance", "savings", "how much", "total", "summary", "left", "remaining",
+        "kitna", "bacha", "jama", "ulida", "entu",
+    ],
+    "financial_guidance": [
+        "advice", "suggest", "help", "plan", "budget", "save", "invest", "tip",
+        "guidance", "should i", "how to", "salah", "madad", "kaise", "kya karu",
+        "sahaya", "hege", "suchane",
+    ],
+    "rtc_query": [
+        "rtc", "land", "survey", "acre", "crop", "khasra", "khata", "property",
+        "patta", "bhoomi", "hola", "bhumi",
+
     ],
 }
 
 
 def classify_intent(text: str, language: str = "en") -> str:
+
     """
     Fast rule-based intent classification using keyword matching.
     Falls back to 'general' if nothing matches.
     """
+
     if not text:
         return "general"
 
@@ -99,11 +137,18 @@ def classify_intent(text: str, language: str = "en") -> str:
 
     best_intent = max(scores, key=scores.get)
 
+
     # Only return non-general if there's at least one keyword match
     if scores[best_intent] == 0:
         return "general"
 
     logger.info(f"[INTENT] Detected '{best_intent}' for text: '{text[:60]}'")
+
+    if scores[best_intent] == 0:
+        return "general"
+
+    logger.info(f"[INTENT] '{best_intent}' for: '{text[:60]}'")
+
     return best_intent
 
 

@@ -1,10 +1,14 @@
-from app.utils.id_generator import generate_id
-
-
-def success_response(data: dict, message: str) -> dict:
+def success_response(data: dict, message: str = "Success") -> dict:
     return {
-        "request_id": generate_id("request"),
         "success": True,
         "message": message,
         "data": data,
+    }
+
+
+def error_response(message: str, code: int = 400) -> dict:
+    return {
+        "success": False,
+        "message": message,
+        "code": code,
     }

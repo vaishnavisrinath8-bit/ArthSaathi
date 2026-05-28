@@ -1,6 +1,5 @@
 from app.analyzers.common import band_from_thresholds, clamp
 
-
 PURPOSE_PRODUCTS = {
     "Agriculture": ["SBI Kisan Credit Card", "NABARD Farm Loan", "Local MFI - Grameen"],
     "Business": ["Mudra Business Loan", "Cooperative Business Loan", "MFI Working Capital"],
@@ -97,7 +96,6 @@ def calculate_best_tenure(payload: dict, score: int) -> int:
 def calculate_emi(principal: float, months: int) -> float:
     if principal <= 0:
         return 0
-
     monthly_rate = 0.12 / 12
     power = (1 + monthly_rate) ** months
     return principal * monthly_rate * power / (power - 1)
@@ -110,14 +108,12 @@ def build_explainability(payload: dict) -> dict:
         "Collateral available": payload["collateral"] != "None",
         "No existing loans": payload["existing_loans"] == "No",
     }
-
     warning_rules = {
         "Irregular income months": payload["irregular_income_months"] > 0,
         "Existing EMI burden": payload["existing_monthly_emi"] > 0,
         "No collateral available": payload["collateral"] == "None",
     }
-
     return {
-        "positive_factors": [key for key, enabled in positive_rules.items() if enabled],
-        "warning_factors": [key for key, enabled in warning_rules.items() if enabled],
+        "positive_factors": [k for k, v in positive_rules.items() if v],
+        "warning_factors": [k for k, v in warning_rules.items() if v],
     }

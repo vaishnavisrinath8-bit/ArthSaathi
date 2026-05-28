@@ -1,48 +1,38 @@
-
-from fastapi import APIRouter
-
-from app.schemas.ai_analysis_schema import FinancialAnalysisRequest
-from app.schemas.loan_analysis_schema import LoanAnalysisRequest
-from app.services.ai_analysis_service import (
-    analyze_financial_signup,
-    analyze_loan_eligibility,
-)
-from app.utils.response_builder import success_response
-
 from typing import Annotated, Literal, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field, model_validator
 
 from app.core.constants import Dialect, Occupation, RepaymentHabit, YesNo
-from app.services.ai_analysis_service import analyze_signup_profile
-
-
+from app.schemas.ai_analysis_schema import FinancialAnalysisRequest
+from app.schemas.loan_analysis_schema import LoanAnalysisRequest
+from app.services.ai_analysis_service import (
+    analyze_financial_signup,
+    analyze_loan_eligibility,
+    analyze_signup_profile,
+)
+from app.utils.response_builder import success_response
 
 router = APIRouter(prefix="/ai-analysis", tags=["AI Analysis"])
 
 
-
+# ── Inline request model for /analyze ────────────────────────────────────────
 
 class FarmerDetails(BaseModel):
-    primary_harvest_crops: list[str] = Field(
-        ..., examples=[["Paddy", "Ragi"]], min_length=1
-    )
-    monthly_cost_of_inputs: Annotated[float, Field(ge=0, examples=[12000])]
-    rtc_land_record_ocr_passed: bool = Field(
-        ..., description="True when RTC land record OCR document verification passes."
-    )
+    primary_harvest_crops: list[str] = Field(..., min_length=1)
+    monthly_cost_of_inputs: Annotated[float, Field(ge=0)]
+    rtc_land_record_ocr_passed: bool
 
 
 class GroceryShopDetails(BaseModel):
-    initial_business_investment: Annotated[float, Field(ge=0, examples=[150000])]
+    initial_business_investment: Annotated[float, Field(ge=0)]
     supplier_credit_terms: YesNo
     inventory_turn_cycle: Literal["Weekly", "Monthly"]
 
 
 class TailorDetails(BaseModel):
-    machinery_asset_count: Annotated[int, Field(ge=0, examples=[2])]
-    weekly_order_throughput_capacity: Annotated[int, Field(ge=0, examples=[35])]
+    machinery_asset_count: Annotated[int, Field(ge=0)]
+    weekly_order_throughput_capacity: Annotated[int, Field(ge=0)]
     collects_advance_fabric_deposits: YesNo
 
 
@@ -50,19 +40,19 @@ class WorkerDetails(BaseModel):
     employment_stability_status: Literal[
         "Permanent Daily Wage", "Seasonal Laborer", "Gig Contractor"
     ]
-    typical_working_days_per_month: Annotated[int, Field(ge=0, le=31, examples=[22])]
+    typical_working_days_per_month: Annotated[int, Field(ge=0, le=31)]
     primary_payment_channel: Literal[
         "Hand-to-Hand Cash", "Local Cooperative Bank", "MNREGA Job Account"
     ]
 
 
 class SignupAnalysisRequest(BaseModel):
-    full_name: Annotated[str, Field(min_length=2, examples=["Ravi Kumar"])]
-    mobile_number: Annotated[str, Field(min_length=10, max_length=15, examples=["9876543210"])]
+    full_name: Annotated[str, Field(min_length=2)]
+    mobile_number: Annotated[str, Field(min_length=10, max_length=15)]
     preferred_dialect: Dialect
     user_occupation_profile: Occupation
-    monthly_income_range_baseline: Annotated[float, Field(ge=0, examples=[25000])]
-    average_monthly_household_expenses: Annotated[float, Field(ge=0, examples=[18000])]
+    monthly_income_range_baseline: Annotated[float, Field(ge=0)]
+    average_monthly_household_expenses: Annotated[float, Field(ge=0)]
     has_active_loans: YesNo
     past_repayment_habit: RepaymentHabit
 
@@ -86,11 +76,11 @@ class SignupAnalysisRequest(BaseModel):
         return self
 
 
+# ── Endpoints (all paths kept exactly as original) ───────────────────────────
 
 @router.get("/health")
 def health_check():
     return {"status": "ok", "module": "ai_analysis"}
-
 
 
 @router.post("/financial-analysis")
@@ -104,7 +94,7 @@ def loan_analysis(request: LoanAnalysisRequest):
     analysis = analyze_loan_eligibility(request.model_dump())
     return success_response(analysis, "Loan analysis completed")
 
+
 @router.post("/analyze")
 def analyze_signup(request: SignupAnalysisRequest):
     return analyze_signup_profile(request.model_dump())
-

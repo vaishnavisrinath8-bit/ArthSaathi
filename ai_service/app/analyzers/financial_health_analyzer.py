@@ -1,6 +1,5 @@
 from app.analyzers.common import band_from_thresholds, clamp
 
-
 EXPENSE_RATIO_PENALTY = (
     (0.60, 0),
     (0.75, 10),

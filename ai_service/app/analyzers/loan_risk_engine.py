@@ -1,6 +1,5 @@
 from app.analyzers.common import band_from_thresholds, clamp
 
-
 ACTIVE_LOAN_RISK = {"Yes": 20, "No": 0}
 REPAYMENT_RISK = {"Never": 0, "Sometimes": 20, "Frequently": 35}
 

@@ -1,6 +1,5 @@
 from app.analyzers.common import band_from_thresholds
 
-
 SPENDING_BANDS = (
     (0.60, "Controlled Spending"),
     (0.80, "Balanced Spending"),

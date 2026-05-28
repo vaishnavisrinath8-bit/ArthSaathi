@@ -1,3 +1,4 @@
+
 # ai_service/app/speech/whisper_service.py
 # Whisper speech-to-text via OpenAI API
 
@@ -80,3 +81,47 @@ async def transcribe_audio(
     except Exception as e:
         logger.error(f"[WHISPER] Transcription failed: {str(e)}")
         raise RuntimeError(f"Whisper transcription failed: {str(e)}")
+
+import io
+import logging
+
+from groq import AsyncGroq
+from app.core.config import settings
+
+logger = logging.getLogger(__name__)
+
+client = AsyncGroq(api_key=settings.GROQ_API_KEY)
+
+# Groq's Whisper endpoint is free-tier
+WHISPER_MODEL = "whisper-large-v3-turbo"
+
+MIMETYPE_EXT = {
+    "audio/webm": "webm",
+    "audio/mp4": "mp4",
+    "audio/mpeg": "mp3",
+    "audio/wav": "wav",
+    "audio/ogg": "ogg",
+    "audio/flac": "flac",
+}
+
+
+async def transcribe_audio(audio_bytes: bytes, mimetype: str, language: str = "en") -> dict:
+    ext = MIMETYPE_EXT.get(mimetype, "webm")
+    filename = f"audio.{ext}"
+
+    try:
+        transcription = await client.audio.transcriptions.create(
+            file=(filename, io.BytesIO(audio_bytes), mimetype),
+            model=WHISPER_MODEL,
+            language=language,
+            response_format="verbose_json",
+        )
+        return {
+            "text": transcription.text,
+            "language": getattr(transcription, "language", language),
+            "duration": getattr(transcription, "duration", None),
+        }
+    except Exception as e:
+        logger.error(f"[WHISPER] Transcription failed: {e}")
+        raise RuntimeError(f"Transcription failed: {e}")
+

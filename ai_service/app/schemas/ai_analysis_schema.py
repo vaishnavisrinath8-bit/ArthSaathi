@@ -1,5 +1,4 @@
 from typing import Literal, Optional
-
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -35,9 +34,7 @@ class FinancialAnalysisRequest(BaseModel):
     full_name: str = Field(min_length=2)
     mobile_number: str = Field(min_length=10, max_length=15)
     preferred_dialect: Literal["English", "Hindi", "Kannada", "Marathi", "Tamil", "Telugu"]
-    user_occupation_profile: Literal[
-        "Farmer", "Grocery Shop", "Tailor", "Daily Wage Worker"
-    ]
+    user_occupation_profile: Literal["Farmer", "Grocery Shop", "Tailor", "Daily Wage Worker"]
     monthly_income_range_baseline: float = Field(ge=0)
     average_monthly_household_expenses: float = Field(ge=0)
     has_active_loans: Literal["Yes", "No"]
@@ -56,8 +53,6 @@ class FinancialAnalysisRequest(BaseModel):
             "Tailor": self.tailor_details,
             "Daily Wage Worker": self.worker_details,
         }
-
         if details[self.user_occupation_profile] is None:
             raise ValueError(f"{self.user_occupation_profile} details are required")
-
         return self
