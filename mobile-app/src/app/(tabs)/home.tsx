@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, RefreshControl,
+  ScrollView, View, Text, TouchableOpacity, RefreshControl, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,8 +9,8 @@ import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useStore, useTotals } from '../../store';
 import { HealthScoreRing } from '../../components/home/HealthScoreRing';
 import { endpoints } from '../../services/api';
-import { Card } from '../../components/ui/Card';
 import { C } from '../../constants/colors';
+import { useLocation } from '../../hooks/useLocation';
 
 const fmt = (n: number) => 'Rs ' + n.toLocaleString('en-IN');
 
@@ -40,13 +40,19 @@ function MiniBarChart({ data }: { data: { m: string; v: number }[] }) {
 export default function HomeScreen() {
   const router   = useRouter();
   const { income, expense, savings, score } = useTotals();
+  const occupation = useStore((s) => s.occupation);
   const transactions = useStore((s) => s.transactions);
   const setTransactions = useStore((s) => s.setTransactions);
   const unread = useStore((s) => s.notifications.filter((n) => !n.read).length);
   const user = useStore((s: any) => s.user);
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const locationStr = [user?.village, user?.district].filter(Boolean).join(', ') || 'Location not set';
+  const { location, loading: locationLoading } = useLocation();
+
+  const locationStr = location?.raw
+    ?? [user?.village, user?.district].filter(Boolean).join(', ')
+    ?? (locationLoading ? 'Fetching location…' : null)
+    ?? 'Location not set';
   const displayName = user?.name || 'User';
 
   const fetchTransactions = async () => {
@@ -89,7 +95,8 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }} edges={['top']}>
+    <View style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -104,13 +111,12 @@ export default function HomeScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            paddingHorizontal: 20,
-            paddingTop: 20,
             paddingBottom: 28,
             borderBottomLeftRadius: 28,
             borderBottomRightRadius: 28,
           }}
         >
+          <SafeAreaView edges={['top']} style={{ paddingHorizontal: 20, paddingTop: 20 }}>
       {/* Header row */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
         <View>
@@ -157,6 +163,7 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
+          </SafeAreaView>
         </LinearGradient>
 
         {/* ── Stat cards — Kotlin StatCardItem style ── */}
@@ -276,7 +283,7 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* ── Quick Services 2×2 grid — exactly like Kotlin ── */}
+        {/* ── Quick Services ── */}
         <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: '900', color: '#1e293b', marginBottom: 12 }}>
             Quick Services
@@ -314,7 +321,40 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
 
-            {/* Loan Risk */}
+            {/* Profession Dashboard */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.push('/(tabs)/business')}
+              style={{ flex: 1 }}
+            >
+              <View
+                style={{
+                  backgroundColor: '#fff', borderRadius: 14, padding: 14,
+                  flexDirection: 'row', alignItems: 'center',
+                  shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+                }}
+              >
+                <View
+                  style={{
+                    width: 40, height: 40, borderRadius: 12,
+                    backgroundColor: `${C.teal600}1F`,
+                    alignItems: 'center', justifyContent: 'center',
+                    marginRight: 10,
+                  }}
+                >
+                  <Feather name="briefcase" size={20} color={C.teal600} />
+                </View>
+                <Text style={{ fontSize: 13, fontWeight: '900', color: '#1e293b', lineHeight: 16 }}>
+                  My{'\n'}Business
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Row 2 */}
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            {/* Loan Analysis */}
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => router.push('/screens/loan')}
@@ -343,14 +383,11 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
 
-          {/* Row 2 */}
-          <View style={{ flexDirection: 'row', gap: 12 }}>
-            {/* Scam Check */}
+          {/* Insights */}
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => router.push('/screens/scam')}
+            onPress={() => router.push('/(tabs)/insights')}
               style={{ flex: 1 }}
             >
               <View
@@ -364,49 +401,20 @@ export default function HomeScreen() {
                 <View
                   style={{
                     width: 40, height: 40, borderRadius: 12,
-                    backgroundColor: `${C.rose500}1F`,
+                  backgroundColor: `${C.amber600}1F`,
                     alignItems: 'center', justifyContent: 'center',
                     marginRight: 10,
                   }}
                 >
-                  <MaterialIcons name="security" size={20} color={C.rose500} />
+                <Feather name="bar-chart-2" size={20} color={C.amber600} />
                 </View>
                 <Text style={{ fontSize: 13, fontWeight: '900', color: '#1e293b', lineHeight: 16 }}>
-                  Scam{'\n'}Checker
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* RTC OCR */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => router.push('/screens/rtc')}
-              style={{ flex: 1 }}
-            >
-              <View
-                style={{
-                  backgroundColor: '#fff', borderRadius: 14, padding: 14,
-                  flexDirection: 'row', alignItems: 'center',
-                  shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
-                }}
-              >
-                <View
-                  style={{
-                    width: 40, height: 40, borderRadius: 12,
-                    backgroundColor: `${C.amber600}1F`,
-                    alignItems: 'center', justifyContent: 'center',
-                    marginRight: 10,
-                  }}
-                >
-                  <MaterialIcons name="upload-file" size={20} color={C.amber600} />
-                </View>
-                <Text style={{ fontSize: 13, fontWeight: '900', color: '#1e293b', lineHeight: 16 }}>
-                  RTC{'\n'}Land Record
+                Smart{'\n'}Insights
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
+
         </View>
 
         {/* ── Monthly Spending — Kotlin white card with bars ── */}
@@ -510,6 +518,6 @@ export default function HomeScreen() {
         </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

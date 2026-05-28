@@ -21,7 +21,9 @@
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.READ_SMS",
+        "android.permission.RECEIVE_SMS"
       ],
       "package": "com.yashwanthn17.mobileapp"
     },
@@ -44,8 +46,8 @@
       "expo-status-bar",
       "expo-secure-store",
       "expo-font",
-      "expo-av",
-      "expo-image"
+      "expo-image",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

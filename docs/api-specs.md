@@ -1,5 +1,7 @@
 # ArthSaathi API Documentation
 
+> Current mobile prototype note: the active Expo app is local-first and does not call these APIs from `src/app`, `src/components`, or `src/store`. Keep this file as the future backend contract for integration work.
+
 **Base URL:** `http://localhost:3000/api`  
 **Authentication:** Bearer JWT token in `Authorization` header  
 **Content-Type:** `application/json` (except file upload endpoints)
@@ -53,7 +55,6 @@ Register a new user.
   "name": "Ramesh Kumar",
   "phone": "9876543210",
   "password": "securepass123",
-  "email": "ramesh@example.com",
   "language": "kn",
   "village": "Hosur",
   "district": "Tumkur"
@@ -70,7 +71,6 @@ Register a new user.
       "id": "uuid",
       "name": "Ramesh Kumar",
       "phone": "9876543210",
-      "email": "ramesh@example.com",
       "language": "kn",
       "village": "Hosur",
       "district": "Tumkur",
@@ -151,7 +151,6 @@ Get user profile.
     "id": "uuid",
     "name": "Ramesh Kumar",
     "phone": "9876543210",
-    "email": "ramesh@example.com",
     "language": "kn",
     "village": "Hosur",
     "district": "Tumkur"

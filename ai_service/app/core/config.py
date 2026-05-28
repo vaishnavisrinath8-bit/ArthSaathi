@@ -1,7 +1,12 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-class Settings:
-    PROJECT_NAME = "ArthSaathi AI Service"
-    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+
+class Settings(BaseSettings):
+    APP_NAME: str = "ArthSaathi AI Service"
+    APP_ENV: str = "development"
+    API_PREFIX: str = "/api/v1"
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
 
 settings = Settings()
