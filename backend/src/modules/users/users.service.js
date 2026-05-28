@@ -1,21 +1,14 @@
 // src/modules/users/users.service.js
+// User profile operations
 
-const prisma = require('../../config/db');
+const prisma = require("../../config/db");
 
 /**
- * Update user profile fields
+ * Get user profile by ID
  */
-const updateProfile = async (userId, body) => {
-  const { name, language, village, district } = body;
-
-  const updated = await prisma.user.update({
+const getUserById = async (userId) => {
+  const user = await prisma.user.findUnique({
     where: { id: userId },
-    data: {
-      ...(name && { name }),
-      ...(language && { language }),
-      ...(village !== undefined && { village }),
-      ...(district !== undefined && { district }),
-    },
     select: {
       id: true,
       name: true,
@@ -23,13 +16,47 @@ const updateProfile = async (userId, body) => {
       language: true,
       village: true,
       district: true,
-      occupation: true,
-      monthlyIncome: true,
-      monthlyExpenses: true,
+      createdAt: true,
     },
   });
 
-  return updated;
+  if (!user) {
+    const error = new Error("User not found.");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return user;
 };
 
-module.exports = { updateProfile };
+/**
+ * Update user profile
+ */
+const updateUser = async (userId, updateData) => {
+  const allowedFields = ["name", "language", "village", "district"];
+  const filteredData = {};
+
+  allowedFields.forEach((field) => {
+    if (updateData[field] !== undefined) {
+      filteredData[field] = updateData[field];
+    }
+  });
+
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: filteredData,
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      language: true,
+      village: true,
+      district: true,
+      updatedAt: true,
+    },
+  });
+
+  return user;
+};
+
+module.exports = { getUserById, updateUser };
