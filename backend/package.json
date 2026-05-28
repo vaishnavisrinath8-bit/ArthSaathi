@@ -8,7 +8,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "db:migrate": "npx prisma migrate dev",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "prisma:generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -16,13 +17,22 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^5.10.0",
+    "axios": "^1.16.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+<<<<<<< HEAD
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+=======
+    "express-validator": "^7.3.2",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
+>>>>>>> ef4a7906498a0711279c73ec664abff8b396c041
     "winston": "^3.19.0"
   },
   "devDependencies": {

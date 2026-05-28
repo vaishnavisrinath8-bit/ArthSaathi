@@ -1,10 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+
 from app.core.config import settings
 from app.routes.ai_analysis_routes import router as ai_analysis_router
 
 app = FastAPI(title=settings.APP_NAME, version="1.0.0")
+
+from app.core.constants import settings
+from app.routes.ai_analysis_routes import router as ai_analysis_router
+
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version="1.0.0",
+    description="AI analysis service for signup-based occupation financial profiling.",
+)
+
 
 app.add_middleware(
     CORSMiddleware,
