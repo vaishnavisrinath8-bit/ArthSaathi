@@ -3,6 +3,7 @@
 
 const { body } = require("express-validator");
 
+// Unchanged
 const financialGuidanceValidation = [
   body("query")
     .trim()
@@ -17,6 +18,7 @@ const financialGuidanceValidation = [
     .withMessage("Unsupported language code."),
 ];
 
+// Unchanged
 const scamDetectionValidation = [
   body("message")
     .trim()
@@ -26,30 +28,31 @@ const scamDetectionValidation = [
     .withMessage("Message must be between 5 and 2000 characters."),
 ];
 
+// Upgraded — matches new ArthScore loan analysis inputs
 const loanAnalysisValidation = [
-  body("loanAmount")
-    .notEmpty()
-    .withMessage("Loan amount is required.")
-    .isFloat({ min: 1 })
-    .withMessage("Loan amount must be a positive number."),
+  body("requestedLoanAmount")
+    .notEmpty().withMessage("Requested loan amount is required.")
+    .isFloat({ min: 1000 }).withMessage("Minimum loan amount is ₹1,000."),
 
-  body("interestRate")
-    .notEmpty()
-    .withMessage("Interest rate is required.")
-    .isFloat({ min: 0, max: 100 })
-    .withMessage("Interest rate must be between 0 and 100."),
+  body("expectedInterestRate")
+    .notEmpty().withMessage("Expected interest rate is required.")
+    .isFloat({ min: 0, max: 100 }).withMessage("Interest rate must be between 0 and 100."),
 
   body("tenureMonths")
-    .notEmpty()
-    .withMessage("Tenure in months is required.")
-    .isInt({ min: 1 })
-    .withMessage("Tenure must be a positive integer."),
+    .notEmpty().withMessage("Tenure in months is required.")
+    .isInt({ min: 1, max: 360 }).withMessage("Tenure must be between 1 and 360 months."),
 
-  body("monthlyIncome")
-    .notEmpty()
-    .withMessage("Monthly income is required.")
-    .isFloat({ min: 1 })
-    .withMessage("Monthly income must be a positive number."),
+  body("loanPurpose")
+    .notEmpty().withMessage("Loan purpose is required.")
+    .isIn([
+      "WORKING_CAPITAL", "AGRICULTURE", "EQUIPMENT_PURCHASE",
+      "HOME_IMPROVEMENT", "EDUCATION", "MEDICAL",
+      "BUSINESS_EXPANSION", "OTHER",
+    ]).withMessage("Invalid loan purpose."),
+
+  body("collateralValue")
+    .optional()
+    .isFloat({ min: 0 }).withMessage("Collateral value must be a positive number."),
 ];
 
 module.exports = {

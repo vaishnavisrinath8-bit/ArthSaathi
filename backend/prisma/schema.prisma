@@ -34,6 +34,24 @@ enum OccupationType {
   daily_wage_worker
 }
 
+enum LoanRiskLevel {
+  LOW
+  MODERATE
+  HIGH
+  VERY_HIGH
+}
+
+enum LoanPurpose {
+  WORKING_CAPITAL
+  AGRICULTURE
+  EQUIPMENT_PURCHASE
+  HOME_IMPROVEMENT
+  EDUCATION
+  MEDICAL
+  BUSINESS_EXPANSION
+  OTHER
+}
+
 enum RepaymentHabit {
   always_on_time
   sometimes_late
@@ -41,6 +59,7 @@ enum RepaymentHabit {
   defaulted
   no_loans_yet
 }
+
 
 // ─────────────────────────────────────────
 // USER MODEL
@@ -241,4 +260,68 @@ model GenericProfile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("generic_profiles")
+}
+
+
+model LoanAnalysis {
+  id                  String         @id @default(uuid())
+  userId              String
+  requestedLoanAmount Float
+  eligibleAmount      Float
+  arthScore           Int            // 0–1000
+  riskLevel           LoanRiskLevel
+  emi                 Float
+  tenureMonths        Int
+  interestRate        Float
+  totalPayable        Float
+  debtToIncomeRatio   Float
+  repaymentCapacity   Float          // disposable income after expenses
+  loanPurpose         LoanPurpose?
+  collateralValue     Float?
+
+  positiveFactors     Json           // string[]
+  negativeFactors     Json           // string[]
+  riskFactors         Json           // string[]
+  recommendations     Json           // string[]
+
+  rawAIResponse       Json           // full AI service response
+
+  createdAt           DateTime       @default(now())
+
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repaymentForecast   RepaymentForecastEntry[]
+  recommendedProducts RecommendedLoanProduct[]
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@map("loan_analyses")
+}
+
+model RepaymentForecastEntry {
+  id               String       @id @default(uuid())
+  loanAnalysisId   String
+  month            Int
+  predictedIncome  Float
+  emi              Float
+  remainingBalance Float
+
+  loanAnalysis     LoanAnalysis @relation(fields: [loanAnalysisId], references: [id], onDelete: Cascade)
+
+  @@index([loanAnalysisId])
+  @@map("repayment_forecast_entries")
+}
+
+model RecommendedLoanProduct {
+  id             String       @id @default(uuid())
+  loanAnalysisId String
+  provider       String
+  productName    String
+  interestRate   String
+  maxAmount      Float
+  reason         String
+
+  loanAnalysis   LoanAnalysis @relation(fields: [loanAnalysisId], references: [id], onDelete: Cascade)
+
+  @@index([loanAnalysisId])
+  @@map("recommended_loan_products")
 }

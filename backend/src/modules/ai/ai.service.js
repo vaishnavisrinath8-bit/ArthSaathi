@@ -11,7 +11,7 @@ const AI_BASE_URL = environment.ai.serviceUrl;
 // Axios instance for AI service
 const aiClient = axios.create({
   baseURL: AI_BASE_URL,
-  timeout: 30000, // 30 seconds
+  timeout: 30000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -31,7 +31,6 @@ const getFinancialGuidance = async (userId, { query, language }) => {
     throw buildAIServiceError(err);
   }
 
-  // Persist the report
   const report = await prisma.aIReport.create({
     data: {
       userId,
@@ -60,7 +59,6 @@ const detectScam = async (userId, { message }) => {
     throw buildAIServiceError(err);
   }
 
-  // Persist
   const report = await prisma.aIReport.create({
     data: {
       userId,
@@ -74,40 +72,10 @@ const detectScam = async (userId, { message }) => {
 };
 
 /**
- * Send loan details to AI for risk analysis
- */
-const analyzeLoan = async (userId, { loanAmount, interestRate, tenureMonths, monthlyIncome }) => {
-  const inputData = { loanAmount, interestRate, tenureMonths, monthlyIncome };
-
-  let aiResponse;
-
-  try {
-    const response = await aiClient.post("/loan/analyze", inputData);
-    aiResponse = response.data;
-  } catch (err) {
-    logger.error(`AI service error (loan/analyze): ${err.message}`);
-    throw buildAIServiceError(err);
-  }
-
-  // Persist
-  const report = await prisma.aIReport.create({
-    data: {
-      userId,
-      reportType: "loan_analysis",
-      inputData,
-      aiResponse,
-    },
-  });
-
-  return { reportId: report.id, result: aiResponse };
-};
-
-/**
  * Build a clean error when AI service is unreachable or fails
  */
 const buildAIServiceError = (err) => {
   if (err.response) {
-    // FastAPI returned an error response
     const error = new Error(
       err.response.data?.detail || "AI service returned an error."
     );
@@ -124,4 +92,6 @@ const buildAIServiceError = (err) => {
   }
 };
 
-module.exports = { getFinancialGuidance, detectScam, analyzeLoan };
+// analyzeLoan removed — now handled by loanAnalysis.service.js
+
+module.exports = { getFinancialGuidance, detectScam };
