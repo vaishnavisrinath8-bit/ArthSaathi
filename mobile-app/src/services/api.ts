@@ -5,6 +5,8 @@ import { getToken } from './auth';
 // ─────────────────────────────────────────
 // Base URLs
 // ─────────────────────────────────────────
+// REPLACE '192.168.1.X' WITH YOUR COMPUTER'S ACTUAL IPv4 ADDRESS!
+// localhost will NOT work on a physical device.
 const envApiUrl = process.env.EXPO_PUBLIC_API_URL;
 const envVoiceUrl = process.env.EXPO_PUBLIC_VOICE_URL;
 
@@ -30,6 +32,7 @@ export const api: AxiosInstance = axios.create({
   timeout: 15000,
 });
 
+/** Separate voice micro-service (whisper / tts) */
 export const voiceApi: AxiosInstance = axios.create({
   baseURL: VOICE,
   timeout: 20000,
@@ -101,26 +104,15 @@ voiceApi.interceptors.response.use(
 );
 
 // ─────────────────────────────────────────
-// Response unwrapper
+// Response unwrapper — returns `data` from
+// the standard { success, message, data } envelope
 // ─────────────────────────────────────────
 function unwrap<T = any>(promise: Promise<{ data: { data: T } }>) {
   return promise.then((res) => res.data.data);
 }
 
 // ─────────────────────────────────────────
-// Language code map (used in signup screens)
-// ─────────────────────────────────────────
-export const LANGUAGE_CODE_MAP = {
-  English: 'en',
-  Hindi: 'hi',
-  Kannada: 'kn',
-  Marathi: 'mr',
-  Tamil: 'ta',
-  Telugu: 'te',
-} as const;
-
-// ─────────────────────────────────────────
-// API Endpoints
+// API Endpoints — matches backend spec exactly
 // ─────────────────────────────────────────
 export const endpoints = {
 
@@ -140,49 +132,10 @@ export const endpoints = {
 
   getMe: () => api.get('/auth/me'),
 
-  // ── Profile ─────────────────────────────
-  getProfile: () => api.get('/profile/me'),
+  getMyProfile: () => api.get('/profile/me'),
 
-  createFarmerProfile: (body: {
-    occupation: string;
-    monthlyIncome: string;
-    monthlyExpenses: string;
-    crops: string[];
-    inputCost?: string;
-    repaymentHabit?: string;
-    hasActiveLoans?: boolean;
-  }) => api.post('/profile/farmer', body),
-
-  createShopProfile: (body: {
-    occupation: string;
-    monthlyIncome: string;
-    monthlyExpenses: string;
-    investmentAmount?: string;
-    supplierCredit?: string;
-    inventoryCycle?: string;
-    repaymentHabit?: string;
-    hasActiveLoans?: boolean;
-  }) => api.post('/profile/shop', body),
-
-  createTailorProfile: (body: {
-    occupation: string;
-    monthlyIncome: string;
-    monthlyExpenses: string;
-    machineryCount?: string;
-    weeklyStitchCapacity?: string;
-    repaymentHabit?: string;
-    hasActiveLoans?: boolean;
-  }) => api.post('/profile/tailor', body),
-
-  createGenericProfile: (body: {
-    occupation: string;
-    monthlyIncome: string;
-    monthlyExpenses: string;
-    workingDaysPerMonth?: string;
-    employmentStability?: string;
-    repaymentHabit?: string;
-    hasActiveLoans?: boolean;
-  }) => api.post('/profile/generic', body),
+  // ── User ────────────────────────────────
+  getProfile: () => api.get('/users/profile'),
 
   updateProfile: (body: Record<string, any>) =>
     api.put('/users/profile', body),
@@ -197,7 +150,7 @@ export const endpoints = {
 
   addTransaction: (body: {
     amount: number;
-    type: string;
+    type: string;      // income | expense | saving
     category: string;
     note?: string;
     date?: string;
@@ -233,7 +186,7 @@ export const endpoints = {
   uploadRtc: (form: FormData) =>
     api.post('/rtc/upload', form, {
       headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 30000,
+      timeout: 30000,   // OCR can be slow
     }),
 
   getRtcRecords: () => api.get('/rtc'),
