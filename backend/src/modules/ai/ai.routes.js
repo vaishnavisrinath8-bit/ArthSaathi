@@ -15,7 +15,7 @@ const authMiddleware = require("../../middlewares/auth.middleware");
 // All AI routes are protected
 router.use(authMiddleware);
 
-// POST /api/ai/financial-guidance
+// POST /api/ai/financial-guidance — unchanged
 router.post(
   "/financial-guidance",
   financialGuidanceValidation,
@@ -23,7 +23,7 @@ router.post(
   aiController.financialGuidance
 );
 
-// POST /api/ai/scam-detection
+// POST /api/ai/scam-detection — unchanged
 router.post(
   "/scam-detection",
   scamDetectionValidation,
@@ -31,7 +31,19 @@ router.post(
   aiController.scamDetection
 );
 
-// POST /api/ai/loan-analysis
+// POST /api/ai/loan-analysis — upgraded to ArthScore engine
+// IMPORTANT: history and :id routes must be defined BEFORE the POST
+// to avoid route conflicts
+router.get(
+  "/loan-analysis/history",
+  aiController.getLoanHistory
+);
+
+router.get(
+  "/loan-analysis/:id",
+  aiController.getLoanAnalysisById
+);
+
 router.post(
   "/loan-analysis",
   loanAnalysisValidation,

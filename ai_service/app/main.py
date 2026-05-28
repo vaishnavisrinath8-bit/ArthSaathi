@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
+from app.routes.loan_routes import router as loan_router
 from app.core.config import settings
 from app.routes.ai_analysis_routes import router as ai_analysis_router
 
@@ -44,7 +44,7 @@ app.include_router(ai_analysis_router, prefix=settings.API_PREFIX)
 # Chat + Voice Input
 app.include_router(chat_router)
 app.include_router(speech_router)
-
+app.include_router(loan_router)
 
 @app.get("/")
 def root():
