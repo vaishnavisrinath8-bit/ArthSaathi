@@ -80,8 +80,7 @@ model User {
   monthlyIncome   Float?
   monthlyExpenses Float?
 
-  // Loan History (stored as structured JSON array)
-  // Each entry: { lender, amount, purpose, startDate, endDate, status }
+  // Loan History
   loanHistory     Json?
 
   // Repayment History
@@ -95,10 +94,14 @@ model User {
   aiReports       AIReport[]
   rtcRecords      RTCRecord[]
   chatMessages    ChatMessage[]
+
   farmerProfile   FarmerProfile?
   shopProfile     ShopProfile?
   tailorProfile   TailorProfile?
   genericProfile  GenericProfile?
+
+  // NEW RELATION
+  loanAnalyses    LoanAnalysis[]
 
   @@map("users")
 }

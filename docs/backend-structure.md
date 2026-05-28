@@ -25,8 +25,8 @@ backend/
 │   │   └── ai/
 │   ├── middleware/
 │   ├── routes/
-│   ├── app.ts
-│   └── server.ts
+│   ├── app.js
+│   └── server.js
 ├── prisma/
 └── package.json
 ```
