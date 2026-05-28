@@ -15,14 +15,40 @@ const app = express();
 // ─────────────────────────────────────────
 // SECURITY MIDDLEWARES
 // ─────────────────────────────────────────
-app.use(helmet()); // Set security HTTP headers
+app.use(helmet());
 app.use(
   cors({
     origin: "*", // In production, restrict to your frontend domain
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-razorpay-signature"],
   })
 );
+
+// ─────────────────────────────────────────
+// RAW BODY — MUST come before express.json()
+// Razorpay webhook signature verification requires the raw request body.
+// We capture it here and attach as req.rawBody for webhook route.
+// ─────────────────────────────────────────
+app.use((req, res, next) => {
+  if (req.path === "/api/payments/webhook") {
+    // Capture raw body as Buffer for webhook signature verification
+    let rawData = "";
+    req.on("data", (chunk) => {
+      rawData += chunk;
+    });
+    req.on("end", () => {
+      req.rawBody = rawData;
+      try {
+        req.body = JSON.parse(rawData);
+      } catch (e) {
+        req.body = {};
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+});
 
 // ─────────────────────────────────────────
 // BODY PARSERS
@@ -36,7 +62,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(loggerMiddleware);
 
 // ─────────────────────────────────────────
-// STATIC FILES (uploaded documents served statically)
+// STATIC FILES
 // ─────────────────────────────────────────
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -46,7 +72,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", routes);
 
 // ─────────────────────────────────────────
-// 404 HANDLER — unmatched routes
+// 404 HANDLER
 // ─────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({

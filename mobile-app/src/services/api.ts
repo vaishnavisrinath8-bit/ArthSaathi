@@ -224,5 +224,44 @@ export const endpoints = {
     }),
 
   getRtcRecords: () => api.get('/rtc'),
-};
 
+// ── Payments ─────────────────────────────────────────────
+/**
+ * Step 1: Call this when user taps "Pay" button.
+ * Backend creates a Razorpay order and returns orderId + keyId.
+ */
+createPaymentOrder: (body: {
+  amount: number;        // In INR, e.g. 500 for ₹500
+  description?: string;  // e.g. "Groceries"
+  category?: string;     // e.g. "Food"
+}) => api.post('/payments/create-order', body),
+
+/**
+ * Step 2: Call this after Razorpay checkout succeeds.
+ * Verifies signature and records the transaction.
+ */
+verifyPayment: (body: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) => api.post('/payments/verify', body),
+
+/**
+ * Get payment history (with optional filters).
+ */
+getPaymentHistory: (params?: {
+  status?: 'created' | 'paid' | 'failed';
+  startDate?: string;
+  endDate?: string;
+}) => api.get('/payments/history', { params }),
+
+/**
+ * Get payment analytics — totals, categories, monthly breakdown.
+ */
+getPaymentAnalytics: () => api.get('/payments/analytics'),
+
+/**
+ * Get a single payment by ID.
+ */
+getPaymentById: (id: string) => api.get(`/payments/${id}`),
+};
