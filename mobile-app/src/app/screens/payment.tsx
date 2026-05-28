@@ -15,6 +15,7 @@ import {
   Platform,
 } from 'react-native';
 import RazorpayCheckout from 'react-native-razorpay';
+import axios from "axios";
 import { useRouter } from 'expo-router';
 import { endpoints } from '../../services/api';
 import { useStore } from '../../store';
@@ -86,37 +87,35 @@ export default function PaymentScreen() {
       // Amount is already pre-filled.
       // User only needs to enter UPI PIN.
       const razorpayOptions = {
-        description: form.description || 'HealthSehat Payment',
-        image: 'https://your-logo-url.com/logo.png', // Replace with your logo
-        currency: 'INR',
-        key: keyId,
-        amount: String(amount), // Must be string in paise
-        name: 'HealthSehat',
-        order_id: orderId,
-        prefill: {
-          email: user?.email || '',
-          contact: user?.phone || '',
-          name: user?.name || '',
-          // If you have the recipient UPI ID:
-          // vpa: form.upiId || '',
-        },
-        theme: {
-          color: '#16A34A', // Green — matches HealthSehat theme
-        },
-        // UPI method options
-        method: {
-          upi: true,
-          card: false,
-          netbanking: false,
-          wallet: false,
-        },
-        modal: {
-          ondismiss: () => {
-            setPaymentStatus('idle');
-            setLoading(false);
-          },
-        },
-      };
+  description: form.description || 'HealthSehat Payment',
+  image: 'https://your-logo-url.com/logo.png',
+  currency: 'INR',
+  key: keyId,
+  amount: String(amount),
+  name: 'HealthSehat',
+  order_id: orderId,
+
+  prefill: {
+    email: user?.email || '',
+    contact: user?.phone || '',
+    name: user?.name || '',
+  },
+
+  notes: {
+    payment_for: 'HealthSehat',
+  },
+
+  theme: {
+    color: '#16A34A',
+  },
+
+  modal: {
+    ondismiss: () => {
+      setPaymentStatus('idle');
+      setLoading(false);
+    },
+  },
+};
 
       // ── Step 3: Razorpay handles UPI payment ───────
       // User sees GPay / PhonePe / Paytm
