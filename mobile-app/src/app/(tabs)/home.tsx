@@ -384,10 +384,10 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
 
-            {/* Tailor-only: Scam/RTC, others: Insights */}
+          {/* Insights */}
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => router.push(occupation === 'TAILOR' ? '/screens/scam' : '/(tabs)/insights')}
+            onPress={() => router.push('/(tabs)/insights')}
               style={{ flex: 1 }}
             >
               <View
@@ -401,57 +401,20 @@ export default function HomeScreen() {
                 <View
                   style={{
                     width: 40, height: 40, borderRadius: 12,
-                    backgroundColor: occupation === 'TAILOR' ? `${C.rose500}1F` : `${C.amber600}1F`,
+                  backgroundColor: `${C.amber600}1F`,
                     alignItems: 'center', justifyContent: 'center',
                     marginRight: 10,
                   }}
                 >
-                  {occupation === 'TAILOR' ? (
-                    <MaterialIcons name="security" size={20} color={C.rose500} />
-                  ) : (
-                    <Feather name="bar-chart-2" size={20} color={C.amber600} />
-                  )}
+                <Feather name="bar-chart-2" size={20} color={C.amber600} />
                 </View>
                 <Text style={{ fontSize: 13, fontWeight: '900', color: '#1e293b', lineHeight: 16 }}>
-                  {occupation === 'TAILOR' ? `Scam\nChecker` : `Smart\nInsights`}
+                Smart{'\n'}Insights
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
 
-          {occupation === 'TAILOR' ? (
-            <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => router.push('/screens/rtc')}
-                style={{ flex: 1 }}
-              >
-                <View
-                  style={{
-                    backgroundColor: '#fff', borderRadius: 14, padding: 14,
-                    flexDirection: 'row', alignItems: 'center',
-                    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 40, height: 40, borderRadius: 12,
-                      backgroundColor: `${C.amber600}1F`,
-                      alignItems: 'center', justifyContent: 'center',
-                      marginRight: 10,
-                    }}
-                  >
-                    <MaterialIcons name="upload-file" size={20} color={C.amber600} />
-                  </View>
-                  <Text style={{ fontSize: 13, fontWeight: '900', color: '#1e293b', lineHeight: 16 }}>
-                    RTC{'\n'}Land Record
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ flex: 1 }} />
-            </View>
-          ) : null}
         </View>
 
         {/* ── Monthly Spending — Kotlin white card with bars ── */}
