@@ -59,6 +59,22 @@ enum RepaymentHabit {
   defaulted
   no_loans_yet
 }
+enum PaymentStatus {
+  created      // Order created, payment not started
+  attempted    // User opened Razorpay checkout
+  paid         // Payment successful and verified
+  failed       // Payment failed
+  refunded     // Payment refunded
+}
+
+enum PaymentMethod {
+  upi
+  card
+  netbanking
+  wallet
+  emi
+  unknown
+}
 
 
 // ─────────────────────────────────────────
@@ -94,7 +110,7 @@ model User {
   aiReports       AIReport[]
   rtcRecords      RTCRecord[]
   chatMessages    ChatMessage[]
-
+  payments        Payment[]
   farmerProfile   FarmerProfile?
   shopProfile     ShopProfile?
   tailorProfile   TailorProfile?
@@ -328,4 +344,43 @@ model RecommendedLoanProduct {
 
   @@index([loanAnalysisId])
   @@map("recommended_loan_products")
+}
+
+model Payment {
+  id                  String        @id @default(uuid())
+  userId              String
+
+  // Razorpay identifiers
+  razorpayOrderId     String        @unique  // order_XXXXXXX from Razorpay
+  razorpayPaymentId   String?       @unique  // pay_XXXXXXX — set after payment
+  razorpaySignature   String?                // HMAC signature — set after verification
+
+  // Payment details
+  amount              Float                  // amount in INR
+  amountPaise         Int                    // amount in paise (Razorpay works in paise)
+  currency            String        @default("INR")
+  status              PaymentStatus @default(created)
+  method              PaymentMethod @default(unknown)
+
+  // Metadata
+  description         String?                // "Groceries", "Rent", etc.
+  category            String?                // links to transaction category
+  receipt             String?                // unique receipt id we generate
+
+  // Razorpay full response (stored for audit)
+  razorpayOrderData   Json?
+  razorpayPaymentData Json?
+
+  // Linked transaction (created after successful payment)
+  transactionId       String?
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([razorpayOrderId])
+  @@index([status])
+  @@map("payments")
 }

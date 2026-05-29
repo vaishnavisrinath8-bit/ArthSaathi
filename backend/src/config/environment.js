@@ -24,10 +24,28 @@ const environment = {
     maxFileSizeMb: parseInt(process.env.MAX_FILE_SIZE_MB || "10"),
     uploadDir: process.env.UPLOAD_DIR || "uploads",
   },
+
+  // ── RAZORPAY ──────────────────────────────
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID,
+    keySecret: process.env.RAZORPAY_KEY_SECRET,
+    webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
+  },
+
+  app: {
+    name: process.env.APP_NAME || "HealthSehat",
+    frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
+  },
 };
 
 // Validate critical env variables
-const required = ["DATABASE_URL", "JWT_SECRET"];
+const required = [
+  "DATABASE_URL",
+  "JWT_SECRET",
+  "RAZORPAY_KEY_ID",
+  "RAZORPAY_KEY_SECRET",
+];
+
 required.forEach((key) => {
   if (!process.env[key]) {
     console.error(`❌ Missing required environment variable: ${key}`);
