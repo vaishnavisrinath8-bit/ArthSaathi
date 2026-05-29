@@ -172,6 +172,32 @@ export const endpoints = {
   deleteTransaction: (id: string) =>
     api.delete(`/transactions/${id}`),
 
+  // ── Ledger (profession-specific) ────────
+  /**
+   * Fetch all ledger entries for a given occupation.
+   * Returns { entries: Transaction[], grouped: Record<category, Transaction[]> }
+   */
+  getLedgerEntries: (occupation: 'FARMER' | 'SHOP_OWNER' | 'TAILOR' | 'DAILY_WAGE') =>
+    api.get('/transactions/ledger', { params: { occupation } }),
+
+  /**
+   * Add a ledger entry. Same as addTransaction but accepts `ledgerMeta`.
+   */
+  addLedgerEntry: (body: {
+    amount: number;
+    type: 'income' | 'expense' | 'saving';
+    category: string;
+    note?: string;
+    date?: string;
+    ledgerMeta?: Record<string, any>;
+  }) => api.post('/transactions', body),
+
+  /**
+   * Delete a ledger entry by transaction id.
+   */
+  deleteLedgerEntry: (id: string) =>
+    api.delete(`/transactions/${id}`),
+
   // ── Dashboard ───────────────────────────
   getDashboard: () => api.get('/dashboard'),
 
@@ -183,10 +209,11 @@ export const endpoints = {
     api.post('/ai/scam-detection', { message }),
 
   loanAnalysis: (body: {
-    loanAmount: number;
-    interestRate: number;
+    requestedLoanAmount: number;
+    expectedInterestRate: number;
     tenureMonths: number;
-    monthlyIncome: number;
+    loanPurpose: string;
+    collateralValue?: number | null;
   }) => api.post('/ai/loan-analysis', body),
 
   // ── RTC ─────────────────────────────────
@@ -197,4 +224,44 @@ export const endpoints = {
     }),
 
   getRtcRecords: () => api.get('/rtc'),
+
+// ── Payments ─────────────────────────────────────────────
+/**
+ * Step 1: Call this when user taps "Pay" button.
+ * Backend creates a Razorpay order and returns orderId + keyId.
+ */
+createPaymentOrder: (body: {
+  amount: number;        // In INR, e.g. 500 for ₹500
+  description?: string;  // e.g. "Groceries"
+  category?: string;     // e.g. "Food"
+}) => api.post('/payments/create-order', body),
+
+/**
+ * Step 2: Call this after Razorpay checkout succeeds.
+ * Verifies signature and records the transaction.
+ */
+verifyPayment: (body: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) => api.post('/payments/verify', body),
+
+/**
+ * Get payment history (with optional filters).
+ */
+getPaymentHistory: (params?: {
+  status?: 'created' | 'paid' | 'failed';
+  startDate?: string;
+  endDate?: string;
+}) => api.get('/payments/history', { params }),
+
+/**
+ * Get payment analytics — totals, categories, monthly breakdown.
+ */
+getPaymentAnalytics: () => api.get('/payments/analytics'),
+
+/**
+ * Get a single payment by ID.
+ */
+getPaymentById: (id: string) => api.get(`/payments/${id}`),
 };
